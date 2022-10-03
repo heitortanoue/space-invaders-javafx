@@ -1,9 +1,11 @@
 public class Base extends Entidade {
     private int vidas;
+    private boolean vivo;
 
-    public Base(Tuple posicao) {
-        super(posicao, new Tuple(0, 0));
-        this.vidas = 50;
+    public Base() {
+        super(new Tuple(0, 0), new Tuple(0, 0));
+        this.vidas = 3;
+        this.vivo = true;
     }
 
     public int getVidas() {
@@ -16,5 +18,21 @@ public class Base extends Entidade {
 
     public void decVidas( int dec ) {
         this.vidas -= dec;
+    }
+
+    public boolean getVivo() {
+        return this.vidas > 0;
+    }
+
+    public void updateVivo() {
+        if (this.vidas <= 0) {
+            this.vivo = false;
+        }
+    }
+
+    public void imprimir ( Console c ) {
+        if (this.vivo) {
+            c.setPixel(this.getPos(), 'B');
+        }
     }
 }

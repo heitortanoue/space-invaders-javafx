@@ -1,11 +1,11 @@
-public class Entidade {
-
-    private int larguraTela = 20;
-    private int alturaTela = 20;
+public abstract class Entidade extends Tela implements Imprimivel {
     private Tuple pos;
     private Tuple vel;
+    // private int largura;
+    // private int altura;
     
     public Entidade(Tuple posicao, Tuple velocidade) {
+        super();
         this.pos = posicao;
         this.vel = velocidade;
     }
@@ -35,20 +35,21 @@ public class Entidade {
     }
 
     public boolean colisaoEntidade(Entidade entidade) {
-        return ( this.pos.distancia(e.getPos()) < 1 );
+        // System.out.println("colisaoEntidade " + this.pos.distancia(entidade.getPos()));
+        return ( this.pos.equals(entidade.pos) );
     }
-
-    public void printConsole( char rep, Console c ) {
-        c.setPixel(this.pos, rep);
+ 
+    public void explodir(Console c) {
+        c.setPixel(this.getPos(), '@');
     }
 
     public boolean colisaoTela() {
         // distancia menor que um ou passou dos limites da tela
         return ( 
-            this.pos.getX() < 0 ||
-            this.pos.getX() > this.larguraTela ||
-            this.pos.getY() < 0 ||
-            this.pos.getY() > this.alturaTela
+            this.pos.getX() <= 0 ||
+            this.pos.getX() >= this.getLarguraTela() - 1 ||
+            this.pos.getY() <= 0 ||
+            this.pos.getY() >= this.getAlturaTela()
             );
     }
 }

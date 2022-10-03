@@ -1,5 +1,4 @@
 public class Alien extends Entidade {
-
     private boolean vivo;
     private Tiro tiro;
 
@@ -25,13 +24,15 @@ public class Alien extends Entidade {
         this.tiro = tiro;
     }
 
-    public void atirar() {
-        if (this.tiro == null) {
-            this.tiro = new Tiro(this.getPos(), new Tuple(0, 1));
-        }
+    public Tiro atirar() {
+        Tuple tiroPos = this.getPos().clone();
+        tiroPos.deslocar(0, 1);
+        return new Tiro(tiroPos, new Tuple(0, 1));
     }
 
-    public boolean alinhadoComNave(Nave nave) {
-        return ( this.getPos().getX() == nave.getPos().getX() );
+    public void imprimir ( Console c ) {
+        if (this.getVivo()) {
+            c.setPixel(this.getPos(), 'A');
+        }
     }
 }

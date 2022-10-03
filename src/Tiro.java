@@ -14,4 +14,14 @@ public class Tiro extends Entidade {
     public void setVisivel(boolean visivel) {
         this.visivel = visivel;
     }
+
+    public boolean estaNaTela () {
+        return (this == null || !this.getVisivel() || this.colisaoTela());
+    }
+
+    public void imprimir ( Console c ) {
+        if (this.getVisivel()) {
+            c.setPixel(this.getPos(), '|');
+        }
+    }
 }

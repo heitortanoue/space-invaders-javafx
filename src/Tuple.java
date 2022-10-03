@@ -32,12 +32,22 @@ public class Tuple {
         x += dx;
         y += dy;
     }
-    
-    public double distancia(Tuple p) {
-        return Math.sqrt(Math.pow(x - p.getX(), 2) + Math.pow(y - p.getY(), 2));
-    }
+
     
     public String toString() {
         return "(" + x + ", " + y + ")";
+    }
+
+    public Tuple clone() {
+        return new Tuple(this.getX(), this.getY());
+    }
+
+    public boolean equals ( Tuple t) {
+        return (this.getX() == t.getX() && this.getY() == t.getY());
+    }
+
+    public Tuple relativoAoChao(Console c) {
+        this.y = c.getAlturaTela() - this.y;
+        return this;
     }
 }

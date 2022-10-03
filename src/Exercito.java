@@ -1,29 +1,30 @@
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Exercito {
     public Alien[][] exercito;
     private Nave naveRef;
-    private int numTiros;
+
+    private ArrayList<Tiro> tiros = new ArrayList<Tiro>();
+
     private Tuple velocidadeExercito;
     private int direcao;
 
     public Exercito (Nave naveRef) {
         this.naveRef = naveRef;
         this.exercito = new Alien[11][5];
-        this.numTiros = 0;
+        // this.numTiros = 0;
         this.direcao = 1;
         this.velocidadeExercito = new Tuple(1, 0);
         this.mobilizarExercito();
     }
 
+    public ArrayList<Tiro> getTiros() {
+        return this.tiros;
+    }
+
     private void addAlien (int linha, int coluna, Alien alien) {
         this.exercito[linha][coluna] = alien;
-    }
-
-    public int getNumTiros () {
-        return this.numTiros;
-    }
-
-    public int addNumTiros () {
-        return this.numTiros++;
     }
 
     public void mobilizarExercito () {
@@ -53,7 +54,9 @@ public class Exercito {
     }
 
     public void acelerarExercito () {
-        mudarVelocidadeExercito(this.velocidadeExercito.deslocar(1, 0));
+        Tuple novaVelocidade = this.velocidadeExercito;
+        novaVelocidade.deslocar(1, 0);
+        mudarVelocidadeExercito(novaVelocidade);
     }
 
     public void moverExercito () {
@@ -72,17 +75,36 @@ public class Exercito {
             }
         }
 
-        System.out.println("Mover exercito " + this.exercito[0][0].getPos().toString() + " " + this.exercito[10][0].getPos().toString());
+        // System.out.println("Mover exercito " + this.exercito[0][0].getPos().toString() + " " + this.exercito[10][0].getPos().toString());
     }
 
-    public void atirar () {
-        for (int i = 0; i < this.exercito.length; i++) {
-            for (int j = 0; j < this.exercito[i].length; j++) {
-                if (this.exercito[i][j].alinhadoComNave(naveRef)) {
-                    this.exercito[i][j].atirar();
-                    System.out.println("O ALIEN" + i + " " + j + " ATIROU " + this.exercito[i][j].getPos().toString());
-                    this.addNumTiros();
-                }
+    public void atirar ( Console c ) {
+        if (tiros.size() >= 2) {
+            return;
+        }
+
+        // tiro randomico
+        Random rand = new Random();
+        int randLinha = rand.nextInt(this.exercito.length - 1);
+        for (int i = this.exercito[0].length - 1; i >= 0; i--) {
+            this.tiros.add(this.exercito[randLinha][i].atirar());
+            break;
+        }
+
+        // checa se a nave esta alinhada com alguma coluna do exercito
+        int xNave = this.naveRef.getPos().getX();
+        if (this.exercito[0][0].getPos().getX() > xNave ||
+            this.exercito[this.exercito.length - 1][0].getPos().getX() < xNave) {
+            return;
+        }
+
+        // tiro focado na nave
+        int xRelative = xNave - this.exercito[0][0].getPos().getX();
+        for (int j = this.exercito[0].length - 1; j >= 0; j--) {
+            if (this.exercito[xRelative][j].getVivo()) {
+                this.tiros.add(this.exercito[xRelative][j].atirar());
+                // System.out.println("tiros[0] = " + this.tiros.get(0).getPos().toString());
+                break;
             }
         }
     }
@@ -99,12 +121,35 @@ public class Exercito {
         return numAliensVivos;
     }
 
+    public Alien alienColisao ( Tiro t ) {
+        for (int i = 0; i < this.exercito.length; i++) {
+            for (int j = 0; j < this.exercito[i].length; j++) {
+                if (this.exercito[i][j].colisaoEntidade(t)) {
+                    return this.exercito[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
     public void imprimir ( Console c ) {
         for (int i = 0; i < this.exercito.length; i++) {
             for (int j = 0; j < this.exercito[i].length; j++) {
                 if (this.exercito[i][j].getVivo()) {
-                    c.setPixel(this.exercito[i][j].getPos(), 'A');
+                    this.exercito[i][j].imprimir(c);
                 }
+            }
+        }
+    }
+
+    public void imprimirTiros ( Console c ) {
+        for (int i = 0; i < this.tiros.size(); i++) {
+            Tiro tiroAtual = this.tiros.get(i);
+            if (tiroAtual == null || !tiroAtual.getVisivel() || tiroAtual.colisaoTela()) {
+                this.tiros.remove(i);
+                i--;
+            } else {
+                tiroAtual.imprimir(c);
             }
         }
     }

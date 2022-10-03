@@ -4,8 +4,8 @@ public class Nave extends Entidade {
     private int pontos;
     private int vidas;
     
-    public Nave (Tuple posicao, Tuple velocidade) {
-        super(posicao, velocidade);
+    public Nave () {
+        super(new Tuple(0, 0), new Tuple(0, 0));
         this.tiro = null;
         this.pontos = 0;
         this.vidas = 3;
@@ -37,7 +37,41 @@ public class Nave extends Entidade {
 
     public void atirar(){
         if (this.tiro == null) {
-            this.tiro = new Tiro(this.getPos(), new Tuple(0, 1));
+            Tuple pos = this.getPos().clone();
+            pos.deslocar(0, -1);
+            this.tiro = new Tiro(pos, new Tuple(0, -1));
+        }
+    }
+
+    public void imprimir ( Console c ) {
+        if (this.getVivo()) {
+            c.setPixel(this.getPos(), 'N');
+        }
+    }
+
+    public void imprimirTiro ( Console c ) {
+        if (this.tiro != null && !this.tiro.estaNaTela()) {
+            this.tiro.imprimir(c);
+            // System.out.println("[Tiro] P:" + this.tiro.getPos().toString() + " V:" + this.tiro.getVel().toString());
+        } else {
+            this.tiro = null;
+        }
+    }
+
+    public void lerTeclado ( char comando) {
+        Tuple posAtual = this.getPos();
+        switch (comando) {
+            case 'a':
+                posAtual.deslocar(-1, 0);
+                break;
+            case 'd':
+                posAtual.deslocar(1, 0);
+                break;
+            case 'l':
+                this.atirar();
+                break;
+            default:
+                break;
         }
     }
 }
