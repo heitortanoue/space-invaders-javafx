@@ -16,7 +16,9 @@ Os alienígenas tentam destruir a nave atirando nela enquanto se aproximam da pa
 
 ## 🕹️ Como jogar
 
-Em breve 🚀
+A - Move a nave para a esquerda
+D - Move a nave para a direita
+L - Atira
 
 ## 👨🏻 Criador
 
