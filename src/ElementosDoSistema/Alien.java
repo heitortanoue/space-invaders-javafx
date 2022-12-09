@@ -14,20 +14,8 @@ public class Alien extends Entidade {
 
     public Alien(int tipo, Tuple posicao, Tuple velocidade) {
         super(posicao, velocidade);
-        this.vivo = true;
-        this.tiro = null;
         this.tipo = tipo;
-        switch(tipo) {
-            case 1:
-                this.setDimensoes(new Image("Imagens/aliens/alien1/1.png"));
-                break;
-            case 2:
-                this.setDimensoes(new Image("Imagens/aliens/alien2/1.png"));
-                break;
-            case 3:
-                this.setDimensoes(new Image("Imagens/aliens/alien3/1.png"));
-                break;
-        }
+        this.resetarAlien();
     }
     
     /** Getter para o atributo vivo
@@ -82,6 +70,20 @@ public class Alien extends Entidade {
     public void resetarAlien () {
         this.vivo = true;
         this.tiro = null;
+        switch(tipo) {
+            case 1:
+                this.setDimensoes(new Image("Imagens/aliens/alien1/1.png"));
+                break;
+            case 2:
+                this.setDimensoes(new Image("Imagens/aliens/alien2/1.png"));
+                break;
+            case 3:
+                this.setDimensoes(new Image("Imagens/aliens/alien3/1.png"));
+                break;
+            case 4:
+                this.setDimensoes(new Image("Imagens/aliens/especial/1.png"));
+                break;
+        }
     }
 
     

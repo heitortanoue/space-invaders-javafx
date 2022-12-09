@@ -4,8 +4,8 @@ package ElementosDoSistema;
 */
 public abstract class Tela {
     // colocar -2 em cada para impressao da borda
-    private int larguraTela = 850;
-    private int alturaTela = 700;
+    private int larguraTela = 900;
+    private int alturaTela = 900;
 
     // distancia da parte de baixo da tela até as bases
     private int distanciaLimiteInferior = 100;

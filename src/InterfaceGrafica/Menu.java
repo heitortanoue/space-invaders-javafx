@@ -37,6 +37,8 @@ public class Menu extends Tela{
 
         btn_comecar.setOnAction(e -> {
             ci.setIniciado(true);
+            ci.pausar(false);
+            ci.getEngine().resetarJogo();
             ci.setTelaAtual(null);
         });
     

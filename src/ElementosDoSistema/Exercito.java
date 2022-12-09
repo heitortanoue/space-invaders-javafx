@@ -12,6 +12,7 @@ public class Exercito {
     private Nave naveRef;
 
     private ArrayList<Tiro> tiros = new ArrayList<Tiro>();
+    private int numTirosMax = 2;
 
     private Tuple velocidadeExercito;
     private double velocidadeSalva;
@@ -36,6 +37,9 @@ public class Exercito {
         return this.tiros;
     }
 
+    public int getTamanhoExercito() {
+        return this.exercito.length * this.exercito[0].length;
+    }
     
     /** Adiciona um Alien na matriz de aliens.
      * @param linha int - Linha da matriz a ser adicionado o Alien.
@@ -101,10 +105,8 @@ public class Exercito {
 
     /** Acelera o exercito na direcao atual.
      */
-    public void acelerarExercito () {
-        Tuple novaVelocidade = this.velocidadeExercito;
-        novaVelocidade.deslocar(0.5 * this.direcao, 0);
-        mudarVelocidadeExercito(novaVelocidade);
+    public void aumentarDificuldade () {
+        this.velocidadeSalva *= 1.2;
     }
 
     /** Move o Exercito de acordo com sua velocidade atual, detecta com as colisoes com borda e anda uma unidade para baixo caso colida.
@@ -112,21 +114,18 @@ public class Exercito {
     public void moverExercito () {
         Alien alienEsquerda = getUltimoAlienVivoEsquerda();
         Alien alienDireita = getUltimoAlienVivoDireita();
-        // printa na tela a posicao do alien mais a esquerda e a direita
-        System.out.println(alienEsquerda.getPos().getX() + " " + alienDireita.getPos().getX());
 
         if (this.direcao == -1 && alienEsquerda.colisaoTela() ||
         this.direcao == 1 && alienDireita.colisaoTela()) {
-            this.velocidadeSalva = this.velocidadeExercito.getX() * -1;
+            this.velocidadeSalva *= -1;
             this.mudarVelocidadeExercito(new Tuple(0, Math.abs(this.velocidadeSalva)));
             if (this._assistForDown == 0) {
                 this._assistForDown = alienEsquerda.getPos().getY();
             }
             this.moverExercito();
-
         }
-
-        if (alienEsquerda.getPos().getY() - this._assistForDown  == alienEsquerda.getDimensoes().getY() * 1.5 ) {
+        
+        if (Math.abs((alienEsquerda.getPos().getY() - this._assistForDown) - alienEsquerda.getDimensoes().getY() * 1.5) < 0.5) {
             this.mudarVelocidadeExercito(new Tuple (this.velocidadeSalva, 0));
             this._assistForDown = 0;
         }
@@ -143,7 +142,7 @@ public class Exercito {
      * @param c Console - Console para desenhar os Tiros.
      */
     public void atirar () {
-        if (tiros.size() >= 2) {
+        if (tiros.size() >= this.numTirosMax) {
             return;
         }
 
@@ -178,6 +177,7 @@ public class Exercito {
     }
 
     public void resetarExercito () {
+        this.mudarVelocidadeExercito(new Tuple(Math.abs(this.velocidadeSalva), 0));
         for (int i = 0; i < this.exercito.length; i++) {
             for (int j = 0; j < this.exercito[i].length; j++) {
                 this.exercito[i][j].resetarAlien();

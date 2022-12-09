@@ -10,6 +10,7 @@ import javafx.event.*;
 import javafx.scene.*;
 import javafx.scene.canvas.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.image.*;
 import javafx.scene.paint.*;
 import javafx.scene.text.*;
@@ -19,32 +20,37 @@ public class ControladorInterface extends Tela {
     private Image background;
     private Engine engine;
 
-    private boolean pausado = false;
+    private Pause pausado = null;
     private boolean iniciado = false;
 
     private Nave nave;
     private Exercito exercito;
     private Base[] bases;
     private Interface intf;
+    private AlienEspecial a_esp;
 
     private GraphicsContext gc;
+    private StackPane stkPane;
     private Scene scene;
     private Stage stage;
-    // private Menu menu;
     private Tela telaAtual;
 
-    public ControladorInterface(Scene scene, Stage stage, GraphicsContext gc, Nave n, Exercito e, Base[] b) {
+    public ControladorInterface(Scene scene, Stage stage, StackPane stkPane, GraphicsContext gc, Nave n, Exercito e, Base[] b, AlienEspecial a_esp) {
         super();
-        this.background = new Image("Imagens/outros/fundo.png");
-        this.engine = new Engine(n, e, b);
+        // this.background = new Image("Imagens/outros/fundo.png");
+        // background do tamanho da tela
+        this.background = new Image("Imagens/outros/fundo.png", n.getLarguraTela(), n.getAlturaTela(), false, false);
+        this.engine = new Engine(n, e, b, a_esp);
 
         this.nave = n;
         this.exercito = e;
         this.bases = b;
         this.gc = gc;
+        this.a_esp = a_esp;
         this.intf = new Interface(n);
         this.scene = scene;
         this.stage = stage;
+        this.stkPane = stkPane;
 
         // Adicionar nova fonte e colocar cor certa
         Font novaFonte = Font.loadFont(ControladorInterface.class.getResource("/Outros/fonte.ttf").toExternalForm(), 16);
@@ -54,6 +60,7 @@ public class ControladorInterface extends Tela {
     }
 
     private void comandosTeclado (Nave n) {
+        ControladorInterface essaInterface = this;
         this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -81,11 +88,11 @@ public class ControladorInterface extends Tela {
                         n.atirar();
                         break;
                     case P:
-                        pausado = !pausado;
+                        essaInterface.pausar();
                         break;
-                    case ENTER:
-                        iniciado = true;
-                        break;
+                    // case ENTER:
+                    //     iniciado = true;
+                    //     break;
                     case ESCAPE:
                         System.exit(0);
                         break;
@@ -125,6 +132,11 @@ public class ControladorInterface extends Tela {
         if (this.telaAtual == null) this.stage.setScene(this.scene);
         if (!this.iniciado) return;
 
+        // pausado
+        if (this.pausado != null) {
+            return;
+        }
+
         this.gc.clearRect(0, 0, this.getLarguraTela(), this.getAlturaTela());
         this.gc.drawImage(this.background, 0, 0);
 
@@ -136,6 +148,7 @@ public class ControladorInterface extends Tela {
     private void imprimirTudo () {
         this.nave.imprimir(this.gc);
         this.exercito.imprimir(this.gc);
+        this.a_esp.imprimir(this.gc);
 
         this.exercito.imprimirTiros(this.gc);
         this.nave.imprimirTiro(this.gc);
@@ -155,7 +168,33 @@ public class ControladorInterface extends Tela {
     }
 
     public void pausar () {
-        this.pausado = !this.pausado;
+        if (this.pausado instanceof Pause) {
+            this.stkPane.getChildren().remove(this.pausado.getPauseScene(this));
+            this.pausado = null;
+            return;
+        }
+
+        this.pausado = new Pause();
+        this.stkPane.getChildren().add(this.pausado.getPauseScene(this));
+    }
+    public void pausar (boolean p) {
+        // pausar
+        if (p) {
+            if (this.pausado instanceof Pause) {
+                return;
+            }
+    
+            this.pausado = new Pause();
+            this.stkPane.getChildren().add(this.pausado.getPauseScene(this));
+        } 
+        // despausar
+        else {
+            if (this.pausado instanceof Pause) {
+                this.stkPane.getChildren().remove(this.pausado.getPauseScene(this));
+                this.pausado = null;
+                return;
+            }
+        }
     }
 
     public void explodir (Entidade ent, Runnable callback) {

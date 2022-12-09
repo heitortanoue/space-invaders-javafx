@@ -11,6 +11,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.animation.AnimationTimer;
 
 /** Classe principal.
@@ -26,14 +27,15 @@ public class SpaceInvaders extends Application {
         for (int i = 0; i < 3; i++) {
             bases[i] = new Base();
         }
+        AlienEspecial alien_esp = new AlienEspecial();
 
-        Group root = new Group();
+        StackPane root = new StackPane();
         Scene scene = new Scene(root);
         Canvas canvas = new Canvas(nave.getLarguraTela(), nave.getAlturaTela());
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         
-        ControladorInterface engineInterface = new ControladorInterface(scene, stage, gc, nave, exercito, bases);
+        ControladorInterface engineInterface = new ControladorInterface(scene, stage, root, gc, nave, exercito, bases, alien_esp);
 
         AnimationTimer timer = new AnimationTimer() {
             @Override

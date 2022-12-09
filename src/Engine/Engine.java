@@ -1,6 +1,5 @@
 package Engine;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import ElementosDoSistema.*;
 import InterfaceGrafica.ControladorInterface;
@@ -13,19 +12,18 @@ public class Engine {
     private Nave n;
     private Exercito e;
     private Base[] b;
+    private AlienEspecial a_esp;
 
-    public Engine(Nave nave, Exercito exercito, Base[] bases) {
+    private int dificuldade = 1;
+
+    public Engine(Nave nave, Exercito exercito, Base[] bases, AlienEspecial alien_esp) {
         this.n = nave;
         this.e = exercito;
         this.b = bases;
-        int larguraTela = n.getLarguraTela();
-        int alturaTela = n.getAlturaTela();
+        this.a_esp = alien_esp;
 
-        this.e.setPosicaoExercito(new Tuple(0.15 * larguraTela, 0.1 * alturaTela), 10);
-        this.b[0].setPos(new Tuple(0.15 * larguraTela, 0.75 * alturaTela));
-        this.b[1].setPos(new Tuple(0.45 * larguraTela, 0.75 * alturaTela));
-        this.b[2].setPos(new Tuple(0.75 * larguraTela, 0.75 * alturaTela));
-        this.n.setPos(new Tuple(0.5 * larguraTela, 0.9 * alturaTela));
+        this.resetarJogo();
+        // this.a_esp.setPos(new Tuple(0 * larguraTela, 0.8 * alturaTela));
     }
 
     /** Método que roda o jogo.
@@ -36,7 +34,7 @@ public class Engine {
             if (!this.n.getVivo() || this.e.getAlturaUltimoAlienVivo() >= b[0].getPos().getY() - 40) {
                 // System.out.println("GAME OVER");
                 ci.mostrarTelaDerrota();
-                return;
+                return; 
             }
             if (this.e.numAliensVivos() == 0) {
                 System.out.println("VITORIA");
@@ -47,6 +45,9 @@ public class Engine {
             this.e.atirar();
             this.colisoesTiros(ci);
             this.n.moverNave();
+            this.a_esp.moverAlienEspecial();
+
+            this.aumentarDificuldade();
         // }
     }
 
@@ -59,14 +60,34 @@ public class Engine {
         this.b[0].resetarBase();
         this.b[1].resetarBase();
         this.b[2].resetarBase();
+        this.a_esp.resetarAlien();
 
-        this.e.setPosicaoExercito(new Tuple(0.15 * larguraTela, 0.1 * alturaTela), 10);
+        this.e.setPosicaoExercito(new Tuple(0.15 * larguraTela, 0.15 * alturaTela), 10);
         this.b[0].setPos(new Tuple(0.15 * larguraTela, 0.75 * alturaTela));
         this.b[1].setPos(new Tuple(0.45 * larguraTela, 0.75 * alturaTela));
         this.b[2].setPos(new Tuple(0.75 * larguraTela, 0.75 * alturaTela));
         this.n.setPos(new Tuple(0.5 * larguraTela, 0.9 * alturaTela));
+        // this.a_esp.setPos(new Tuple(0 * larguraTela, 0.8 * alturaTela));
     }
-    
+   
+    public void aumentarDificuldade () {
+        int dificuldadeMaxima = 3;
+        if (this.dificuldade == dificuldadeMaxima) {
+            return;
+        }
+
+        double deltaDif = 100 / dificuldadeMaxima;
+        int numAliensVivos = this.e.numAliensVivos();
+        int numAliensTotal = this.e.getTamanhoExercito();
+        double porcentagemAliensVivos = (double) numAliensVivos / numAliensTotal * 100;
+        double minDif = (double) 1 / numAliensTotal * 100;
+
+        if (Math.abs(porcentagemAliensVivos - (deltaDif * (dificuldadeMaxima - this.dificuldade))) <= minDif) {
+            this.e.aumentarDificuldade();
+            this.dificuldade++;
+            return;
+        }
+    }
     /** Método que move todos os tiros do jogo na direcao da velocidade.
      * @param tiros ArrayList<Tiro> - Lista de tiros do jogo.
      */
@@ -104,7 +125,7 @@ public class Engine {
                 if (base.getVivo() && base.colisaoEntidade(tiro)) {
 
                     base.decVidas(1);
-                    if (base.getVidas() == 5) {
+                    if (base.getVidas() == base.vidasMax/2) {
                         base.setImagem("Imagens/base/danificada.png");
                     }
                     if (base.getVidas() == 0) {
@@ -145,6 +166,16 @@ public class Engine {
     private void colisaoComAliens (ArrayList<Tiro> tiros, ControladorInterface ci) {
         tiros.forEach(tiro -> {
             if (tiro == null) {
+                return;
+            }
+
+            // colisao com alien especial
+            if (this.a_esp.getVivo() && this.a_esp.colisaoEntidade(tiro)) {
+                ci.explodir(this.a_esp, () -> {
+                    this.a_esp.setVivo(false);
+                });
+                tiro.setVisivel(false);
+                this.n.addPontos(this.a_esp.getPontosPorMorte());
                 return;
             }
 

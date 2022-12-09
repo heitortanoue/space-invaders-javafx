@@ -7,14 +7,13 @@ import javafx.scene.image.Image;
 * @author Heitor Tanoue de Mello - 12547260
 */
 public class Base extends Entidade {
+    public int vidasMax = 20;
     private int vidas;
     private boolean vivo;
 
     public Base() {
         super(new Tuple(0, 0), new Tuple(0, 0));
-        this.vidas = 10;
-        this.vivo = true;
-        this.setDimensoes(new Image("Imagens/base/normal.png"));
+        this.resetarBase();
     }
 
     /** Getter para o atributo vidas
@@ -57,8 +56,9 @@ public class Base extends Entidade {
     }
 
     public void resetarBase () {
-        this.vidas = 10;
+        this.vidas = this.vidasMax;
         this.vivo = true;
+        this.setDimensoes(new Image("Imagens/base/normal.png"));
     }
 
     

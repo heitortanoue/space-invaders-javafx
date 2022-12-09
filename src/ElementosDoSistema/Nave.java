@@ -19,10 +19,7 @@ public class Nave extends Entidade {
     
     public Nave () {
         super(new Tuple(0, 0), new Tuple(0, 0));
-        this.tiro = null;
-        this.pontos = 0;
-        this.vidas = 3;
-        this.setDimensoes(new Image("Imagens/nave/1.png"));
+        this.resetarNave();
     }
 
     public void setVelocidadePadrao(double velocidadePadrao) {
@@ -96,6 +93,7 @@ public class Nave extends Entidade {
 
     public void resetarNave () {
         this.setVel(new Tuple(0, 0));
+        this.setDimensoes(new Image("Imagens/nave/1.png"));
         this.tiro = null;
         this.pontos = 0;
         this.vidas = 3;
