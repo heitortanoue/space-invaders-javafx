@@ -7,7 +7,6 @@ import ElementosDoSistema.Entidades.Base;
 import ElementosDoSistema.Entidades.Exercito;
 import ElementosDoSistema.Entidades.Nave;
 import Engine.*;
-import InterfaceGrafica.Cenas.Interface;
 import InterfaceGrafica.Cenas.Menu;
 import InterfaceGrafica.Cenas.Pause;
 import javafx.concurrent.Task;

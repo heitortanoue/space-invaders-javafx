@@ -1,4 +1,4 @@
-package InterfaceGrafica.Cenas;
+package InterfaceGrafica;
 
 import ElementosDoSistema.Imprimivel;
 import ElementosDoSistema.Entidades.Nave;

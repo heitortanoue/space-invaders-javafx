@@ -52,7 +52,7 @@ public class Engine {
 
             this.e.moverExercito();
             this.e.atirar();
-            this.colisoesTiros(ci);
+            this.trataColisoes(ci);
             this.n.moverNave();
             this.a_esp.moverAlienEspecial();
 
@@ -96,8 +96,8 @@ public class Engine {
         if (Math.abs(porcentagemAliensVivos - (deltaDif * (dificuldadeMaxima - this.dificuldade))) <= minDif) {
             this.e.aumentarDificuldade();
             this.dificuldade++;
-            return;
-        }
+                return;
+            }
     }
 
     /** Método que move todos os tiros do jogo na direcao da velocidade.
@@ -239,7 +239,7 @@ public class Engine {
      * @param todosTiros ArrayList<Tiro> - Lista de tiros do jogo.
      * @param c Console - Console onde o conteúdo será impresso.
      */
-    private void colisoesTiros (ControladorInterface ci) {
+    private void trataColisoes (ControladorInterface ci) {
         ArrayList<Tiro> todosTiros = this.todosTiros();
         moveTiros(todosTiros);
         
