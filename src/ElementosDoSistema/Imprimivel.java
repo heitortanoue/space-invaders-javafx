@@ -7,8 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 */
 public interface Imprimivel {
     /** Metodo que coloca o conteudo no Console para impressao.
-     * @param c Console - Console a ser impresso.
+     * @param gc GraphicsContext - Contexto grafico para impressao.
      */
-
     public void imprimir ( GraphicsContext gc );
 }

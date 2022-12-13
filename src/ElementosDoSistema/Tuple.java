@@ -6,6 +6,10 @@ public class Tuple {
     private double x;
     private double y;
     
+    /** Construtor da classe Tuple.
+     * @param x double - Valor para o atributo x.
+     * @param y double - Valor para o atributo y.
+     */
     public Tuple(double x, double y) {
         this.x = x;
         this.y = y;
@@ -94,15 +98,5 @@ public class Tuple {
      */
     public Tuple intify() {
         return new Tuple(Math.ceil(this.x), Math.ceil(this.y));
-    }
-
-    
-    /** Calcula a distancia entre o chao (do Console) e o y.
-     * @param c Console - Console usado de base para calculo.
-     * @return Tuple
-     */
-    public Tuple relativoAoChao(Console c) {
-        this.y = c.getAlturaTela() - this.y;
-        return this;
     }
 }

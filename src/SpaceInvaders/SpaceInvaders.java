@@ -1,13 +1,15 @@
 package SpaceInvaders;
 
 import ElementosDoSistema.*;
-import Engine.*;
+import ElementosDoSistema.Entidades.AlienEspecial;
+import ElementosDoSistema.Entidades.Base;
+import ElementosDoSistema.Entidades.Exercito;
+import ElementosDoSistema.Entidades.Nave;
 import InterfaceGrafica.*;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

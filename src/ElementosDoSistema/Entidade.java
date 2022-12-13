@@ -5,6 +5,7 @@ package ElementosDoSistema;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import Engine.Tela;
 import javafx.geometry.*;
 
 public abstract class Entidade extends Tela implements Imprimivel {
@@ -16,6 +17,10 @@ public abstract class Entidade extends Tela implements Imprimivel {
     private Tuple pos;
     private Tuple vel;
     
+    /** Construtor da classe Entidade.
+     * @param posicao Tuple - Posicao da Entidade.
+     * @param velocidade Tuple - Velocidade da Entidade.
+     */
     public Entidade(Tuple posicao, Tuple velocidade) {
         super();
         this.pos = posicao;

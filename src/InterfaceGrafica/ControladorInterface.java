@@ -1,10 +1,15 @@
 package InterfaceGrafica;
 
-import javax.swing.text.html.HTMLDocument.RunElement;
 
 import ElementosDoSistema.*;
+import ElementosDoSistema.Entidades.AlienEspecial;
+import ElementosDoSistema.Entidades.Base;
+import ElementosDoSistema.Entidades.Exercito;
+import ElementosDoSistema.Entidades.Nave;
 import Engine.*;
-import InterfaceGrafica.*;
+import InterfaceGrafica.Cenas.Interface;
+import InterfaceGrafica.Cenas.Menu;
+import InterfaceGrafica.Cenas.Pause;
 import javafx.concurrent.Task;
 import javafx.event.*;
 import javafx.scene.*;
@@ -16,6 +21,9 @@ import javafx.scene.paint.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
 
+/** Classe para objetos do tipo ControladorInterface, que é responsável por controlar a interface do jogo.
+ * @author Heitor Tanoue de Mello - 12547260
+ */
 public class ControladorInterface extends Tela {
     private Image background;
     private Engine engine;
@@ -35,6 +43,16 @@ public class ControladorInterface extends Tela {
     private Stage stage;
     private Tela telaAtual;
 
+    /** Construtor da classe ControladorInterface
+     * @param scene Scene - Cena da interface
+     * @param stage Stage - Stage da interface
+     * @param stkPane StackPane - StackPane da interface
+     * @param gc GraphicsContext - GraphicsContext da interface
+     * @param n Nave - Nave do jogo
+     * @param e Exercito - Exercito do jogo
+     * @param b Base[] - Bases do jogo
+     * @param a_esp AlienEspecial - Alien especial do jogo
+     */
     public ControladorInterface(Scene scene, Stage stage, StackPane stkPane, GraphicsContext gc, Nave n, Exercito e, Base[] b, AlienEspecial a_esp) {
         super();
         // this.background = new Image("Imagens/outros/fundo.png");
@@ -59,29 +77,19 @@ public class ControladorInterface extends Tela {
         this.comandosTeclado(n);
     }
 
+    /** Lê os comandos do teclado
+     * @param n Nave - Nave do jogo
+     */
     private void comandosTeclado (Nave n) {
         ControladorInterface essaInterface = this;
         this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                // System.out.println("[Distancias] ESQUERDA: " + n.getPos().getX() + " | DIREITA: " + (n.getLarguraTela() - n.getPos().getX() - n.getDimensoes().getX()));
                 switch (event.getCode()) {
                     case LEFT:
-                        // double distanciaEsq = n.getPos().getX();
-                        // if (distanciaEsq <= 0) {
-                        //     //n.setPos(new Tuple(0, n.getPos().getY()));
-                        //     n.setVel(new Tuple(0, 0));
-                        //     break;
-                        // }
                         n.setVel(new Tuple(-n.getVelocidadePadrao(), 0));
                         break;
                     case RIGHT:
-                        // double distanciaDir = n.getLarguraTela() - (n.getPos().getX() + n.getDimensoes().getX());
-                        // if (distanciaDir <= 0) {
-                        //     //n.setPos(new Tuple(n.getLarguraTela(), n.getPos().getY()));
-                        //     n.setVel(new Tuple(0, 0));
-                        //     break;
-                        // }
                         n.setVel(new Tuple(n.getVelocidadePadrao(), 0));
                         break;
                     case SPACE:
@@ -90,9 +98,6 @@ public class ControladorInterface extends Tela {
                     case P:
                         essaInterface.pausar();
                         break;
-                    // case ENTER:
-                    //     iniciado = true;
-                    //     break;
                     case ESCAPE:
                         System.exit(0);
                         break;
@@ -119,13 +124,12 @@ public class ControladorInterface extends Tela {
         });
     }
 
+    /** Loop principal do jogo
+     */
     public void rodarLoop() {
         // nao comecou e botao nao pressionado
         if (!this.iniciado && this.telaAtual == null) {
-            Menu newMenu = new Menu();
-            this.telaAtual = newMenu;
-            Scene scene = new Scene(newMenu.getMenuScene(this), this.getLarguraTela(), this.getAlturaTela());
-            stage.setScene(scene);
+            mostrarPainel(new Menu());
             return;
         }
         // botao pressionado, trocar cena
@@ -145,6 +149,8 @@ public class ControladorInterface extends Tela {
         this.imprimirTudo();
     }
 
+    /** Imprime todas as entidades na tela
+     */
     private void imprimirTudo () {
         this.nave.imprimir(this.gc);
         this.exercito.imprimir(this.gc);
@@ -160,23 +166,40 @@ public class ControladorInterface extends Tela {
         this.intf.imprimir(gc);
     }
 
+    /** Setter do atributo iniciado
+     * @param iniciado boolean - Novo valor do atributo iniciado
+     */
     public void setIniciado (boolean iniciado) {
         this.iniciado = iniciado;
     }
-    public void setTelaAtual (Menu menu) {
-        this.telaAtual = menu;
+    /** Setter do atributo telaAtual
+     * @param t Tela - Nova tela atual
+     */
+    public void setTelaAtual (Tela t) {
+        this.telaAtual = t;
+    }
+    /** Setter para a cena 
+     * @param s Scene - Nova cena atual
+     */
+    public void setScene (Scene s) {
+        this.stage.setScene(s);
     }
 
+    /** Pausa ou despausa o jogo
+     */
     public void pausar () {
         if (this.pausado instanceof Pause) {
-            this.stkPane.getChildren().remove(this.pausado.getPauseScene(this));
+            this.stkPane.getChildren().remove(this.pausado.getPane());
             this.pausado = null;
             return;
         }
 
         this.pausado = new Pause();
-        this.stkPane.getChildren().add(this.pausado.getPauseScene(this));
+        this.stkPane.getChildren().add(this.pausado.createPane(this));
     }
+    /** Pausa ou despausa o jogo
+     * @param p boolean - Se deve pausar ou despausar
+     */
     public void pausar (boolean p) {
         // pausar
         if (p) {
@@ -185,18 +208,22 @@ public class ControladorInterface extends Tela {
             }
     
             this.pausado = new Pause();
-            this.stkPane.getChildren().add(this.pausado.getPauseScene(this));
+            this.stkPane.getChildren().add(this.pausado.createPane(this));
         } 
         // despausar
         else {
             if (this.pausado instanceof Pause) {
-                this.stkPane.getChildren().remove(this.pausado.getPauseScene(this));
+                this.stkPane.getChildren().remove(this.pausado.getPane());
                 this.pausado = null;
                 return;
             }
         }
     }
 
+    /** Explode uma entidade
+     * @param ent Entidade - Entidade que será explodida!
+     * @param callback Runnable - Callback a ser executado após a explosão
+     */
     public void explodir (Entidade ent, Runnable callback) {
         // se classe é base
         if (ent instanceof Base) {
@@ -207,18 +234,27 @@ public class ControladorInterface extends Tela {
         delay(500, callback);
     }
 
-    public void mostrarTelaDerrota () {
-        if (this.telaAtual instanceof Derrota) return;
-        Derrota newDerrota = new Derrota();
-        this.telaAtual = newDerrota;
-        Scene scene = new Scene(newDerrota.getDerrotaScene(this), this.getLarguraTela(), this.getAlturaTela());
+    /** Mostra um painel na tela
+     * @param panel Painel - Painel a ser mostrado
+     */
+    public void mostrarPainel (Painel panel) {
+        if (this.telaAtual != null && this.telaAtual.getClass() == panel.getClass()) return;
+        this.telaAtual = panel;
+        Scene scene = new Scene(panel.createPane(this), this.getLarguraTela(), this.getAlturaTela());
         this.stage.setScene(scene);
     }
 
+    /** Getter do atributo engine
+     * @return Engine - Engine do jogo
+     */
     public Engine getEngine() {
         return this.engine;
     }
 
+    /** Metodo que da um delay na execucao do programa
+     * @param millis long - Tempo de delay em milisegundos
+     * @param continuation Runnable - Callback a ser executado após o delay
+     */
     public static void delay(long millis, Runnable continuation) {
         Task<Void> sleeper = new Task<Void>() {
             @Override

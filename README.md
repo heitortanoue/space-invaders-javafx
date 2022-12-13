@@ -1,4 +1,4 @@
-# Space Invaders 👾 (Java)
+# Space Invaders 👾 (JavaFX)
 
 
 <!---Esses são exemplos. Veja https://shields.io para outras pessoas ou para personalizar este conjunto de escudos. Você pode querer incluir dependências, status do projeto e informações de licença aqui--->
@@ -16,9 +16,9 @@ Os alienígenas tentam destruir a nave atirando nela enquanto se aproximam da pa
 
 ## 🕹️ Como jogar
 
-A - Move a nave para a esquerda
-D - Move a nave para a direita
-L - Atira
+-> - Move a nave para a esquerda
+<- - Move a nave para a direita
+SPACE - Atira
 
 ## 👨🏻 Criador
 

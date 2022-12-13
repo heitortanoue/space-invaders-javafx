@@ -2,8 +2,15 @@ package Engine;
 import java.util.ArrayList;
 
 import ElementosDoSistema.*;
+import ElementosDoSistema.Entidades.Alien;
+import ElementosDoSistema.Entidades.AlienEspecial;
+import ElementosDoSistema.Entidades.Base;
+import ElementosDoSistema.Entidades.Exercito;
+import ElementosDoSistema.Entidades.Nave;
+import ElementosDoSistema.Entidades.Tiro;
 import InterfaceGrafica.ControladorInterface;
-import javafx.scene.canvas.GraphicsContext;
+import InterfaceGrafica.Cenas.Derrota;
+import InterfaceGrafica.Cenas.Vitoria;
 
 /** Classe para objetos do tipo Engine, que é onde a dinamica de jogo é implementada.
 * @author Heitor Tanoue de Mello - 12547260
@@ -16,6 +23,12 @@ public class Engine {
 
     private int dificuldade = 1;
 
+    /** Construtor da classe Engine.
+     * @param nave Nave - Nave do jogo.
+     * @param exercito Exercito - Exercito de aliens do jogo.
+     * @param bases Base[] - Bases do jogo.
+     * @param alien_esp AlienEspecial - Alien especial do jogo.
+     */
     public Engine(Nave nave, Exercito exercito, Base[] bases, AlienEspecial alien_esp) {
         this.n = nave;
         this.e = exercito;
@@ -23,21 +36,17 @@ public class Engine {
         this.a_esp = alien_esp;
 
         this.resetarJogo();
-        // this.a_esp.setPos(new Tuple(0 * larguraTela, 0.8 * alturaTela));
     }
 
     /** Método que roda o jogo.
      */
     public void rodarJogo (ControladorInterface ci) {
-        // System.out.println("Jogo iniciado");
-        // if (this.n.getVivo() && this.e.numAliensVivos() > 0) {
             if (!this.n.getVivo() || this.e.getAlturaUltimoAlienVivo() >= b[0].getPos().getY() - 40) {
-                // System.out.println("GAME OVER");
-                ci.mostrarTelaDerrota();
+                ci.mostrarPainel(new Derrota());
                 return; 
             }
             if (this.e.numAliensVivos() == 0) {
-                System.out.println("VITORIA");
+                ci.mostrarPainel(new Vitoria());
                 return;
             }
 
@@ -48,9 +57,10 @@ public class Engine {
             this.a_esp.moverAlienEspecial();
 
             this.aumentarDificuldade();
-        // }
     }
 
+    /** Método que reseta todas as entidades do jogo.
+     */
     public void resetarJogo () {
         int larguraTela = n.getLarguraTela();
         int alturaTela = n.getAlturaTela();
@@ -67,9 +77,10 @@ public class Engine {
         this.b[1].setPos(new Tuple(0.45 * larguraTela, 0.75 * alturaTela));
         this.b[2].setPos(new Tuple(0.75 * larguraTela, 0.75 * alturaTela));
         this.n.setPos(new Tuple(0.5 * larguraTela, 0.9 * alturaTela));
-        // this.a_esp.setPos(new Tuple(0 * larguraTela, 0.8 * alturaTela));
     }
    
+    /** Método que aumenta a dificuldade do jogo com base na quantidade de aliens vivos
+     */
     public void aumentarDificuldade () {
         int dificuldadeMaxima = 3;
         if (this.dificuldade == dificuldadeMaxima) {
@@ -88,6 +99,7 @@ public class Engine {
             return;
         }
     }
+
     /** Método que move todos os tiros do jogo na direcao da velocidade.
      * @param tiros ArrayList<Tiro> - Lista de tiros do jogo.
      */
@@ -114,6 +126,10 @@ public class Engine {
         return todosTiros;
     }
 
+    /** Método que verifica as colisoes entre os tiros passados e as bases do jogo.
+     * @param tiros ArrayList<Tiro> - Lista de tiros.
+     * @param ci ControladorInterface - Controlador da interface grafica.
+     */
     private void colisaoComBase (ArrayList<Tiro> tiros, ControladorInterface ci) {
         tiros.forEach(tiro -> {
             if (tiro == null) {
@@ -140,6 +156,10 @@ public class Engine {
         });
     }
 
+    /** Método que verifica as colisoes entre os tiros passados e eles mesmos.
+     * @param tiros ArrayList<Tiro> - Lista de tiros.
+     * @param ci ControladorInterface - Controlador da interface grafica.
+     */
     private void colisaoComTiros (ArrayList<Tiro> tiros, ControladorInterface ci) {
         tiros.forEach(tiro -> {
             if (tiro == null) {
@@ -163,6 +183,10 @@ public class Engine {
         });
     }
 
+    /** Método que verifica as colisoes entre os tiros passados e os aliens do jogo.
+     * @param tiros ArrayList<Tiro> - Lista de tiros.
+     * @param ci ControladorInterface - Controlador da interface grafica.
+     */
     private void colisaoComAliens (ArrayList<Tiro> tiros, ControladorInterface ci) {
         tiros.forEach(tiro -> {
             if (tiro == null) {
@@ -192,6 +216,10 @@ public class Engine {
         });
     }
 
+    /** Método que verifica as colisoes entre os tiros passados e a nave do jogo.
+     * @param tiros ArrayList<Tiro> - Lista de tiros.
+     * @param ci ControladorInterface - Controlador da interface grafica.
+     */
     private void colisaoComNave (ArrayList<Tiro> tiros, ControladorInterface ci) {
         tiros.forEach(tiro -> {
             if (tiro == null) {
@@ -225,5 +253,12 @@ public class Engine {
         this.colisaoComTiros(todosTiros, ci);
         this.colisaoComAliens(tirosNave, ci);
         this.colisaoComNave(tirosAliens, ci);
+    }
+
+    /** Retorna a quantidade de pontos da nave.
+     * @return int - Quantidade de pontos da nave.
+     */
+    public int getPontos () {
+        return this.n.getPontos();
     }
 }
